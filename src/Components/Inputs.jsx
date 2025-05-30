@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
+import html2pdf from 'html2pdf.js';
 
 
 const Inputs = () => {
@@ -159,6 +160,26 @@ const Inputs = () => {
         }
     }
 
+    const handleDownloadPDF = () => {
+        // Format date as dd-mm-yy
+        const d = new Date(date);
+        const day = String(d.getDate()).padStart(2, '0');
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const year = String(d.getFullYear()).slice(-2);
+        const fileName = `${partyName || 'Invoice'}-${day}-${month}-${year}.pdf`;
+
+        const element = document.getElementById('invoice-section');
+        html2pdf()
+            .set({
+                margin: 0.5,
+                filename: fileName,
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+            })
+            .from(element)
+            .save();
+    };
+
     return (
         <>
             {/* Top Left Branding */}
@@ -171,7 +192,7 @@ const Inputs = () => {
                         <label>Party Name:</label>
                         <input ref={addInputRef} onKeyDown={(e) => handleKeyDown(e, 0)} type="text" value={partyName} onChange={(e) => setPartyName(e.target.value)} />
 
-                        <label>Basic Price:</label>
+                        <label>Bill Number:</label>
                         <input ref={addInputRef} onKeyDown={(e) => handleKeyDown(e, 1)} type="text" value={bill} onChange={(e) => setBill(e.target.value)} />
 
                         <label>Net Amount:</label>
@@ -283,7 +304,7 @@ const Inputs = () => {
                             <p><strong>Party Name:</strong> {partyName}</p>
                             <p><strong>Date:</strong> {date}</p>
                             <p><strong>Vehicle Number:</strong> {vehicleNumber}</p>
-                            <p><strong>Basic Price:</strong> {bill}</p>
+                            <p><strong>Bill Number:</strong> {bill}</p>
                             <p><strong>Final Weight:</strong> {quanrev} - {Dust} = {totalquantity}</p>
                             <hr />
 
@@ -329,6 +350,7 @@ const Inputs = () => {
                             <br />
 
                             <div className="no-print">
+                                <button onClick={handleDownloadPDF}>Download PDF</button>
                                 <button onClick={handlePrint}>Print</button>
                                 <button onClick={() => setShowInvoice(false)}>Close</button>
                             </div>
