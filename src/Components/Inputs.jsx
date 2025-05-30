@@ -171,7 +171,7 @@ const Inputs = () => {
                         <label>Party Name:</label>
                         <input ref={addInputRef} onKeyDown={(e) => handleKeyDown(e, 0)} type="text" value={partyName} onChange={(e) => setPartyName(e.target.value)} />
 
-                        <label>Bill Number:</label>
+                        <label>Basic Price:</label>
                         <input ref={addInputRef} onKeyDown={(e) => handleKeyDown(e, 1)} type="text" value={bill} onChange={(e) => setBill(e.target.value)} />
 
                         <label>Net Amount:</label>
@@ -270,7 +270,7 @@ const Inputs = () => {
                     setQuanrev('')
                     setDust('')
                 }}>Reset</button>
-                <button onClick={handleGenerate}>Generate Invoice</button>
+                <button onClick={handleGenerate}>Generate Bill</button>
             </div>
 
 
@@ -283,7 +283,7 @@ const Inputs = () => {
                             <p><strong>Party Name:</strong> {partyName}</p>
                             <p><strong>Date:</strong> {date}</p>
                             <p><strong>Vehicle Number:</strong> {vehicleNumber}</p>
-                            <p><strong>Bill Number:</strong> {bill}</p>
+                            <p><strong>Basic Price:</strong> {bill}</p>
                             <p><strong>Final Weight:</strong> {quanrev} - {Dust} = {totalquantity}</p>
                             <hr />
 
