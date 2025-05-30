@@ -169,15 +169,91 @@ const Inputs = () => {
         const fileName = `${partyName || 'Invoice'}-${day}-${month}-${year}.pdf`;
 
         const element = document.getElementById('invoice-section');
+
+        // Create a style element with minimal, print-like styles
+        const style = document.createElement('style');
+        style.innerHTML = `
+            body, .invoice-section {
+                background: #fff !important;
+                color: #000 !important;
+                font-family: 'Segoe UI', Arial, sans-serif !important;
+                margin: 0;
+                padding: 0;
+                box-shadow: none !important;
+                border-radius: 0 !important;
+            }
+            .invoice-section {
+                padding: 0 !important;
+                margin: 0 !important;
+                max-width: 100% !important;
+                width: 100% !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+            th, td {
+                padding: 8px;
+                border-bottom: 1px solid #888;
+                text-align: left;
+                color: #000 !important;
+                background: #fff !important;
+            }
+            th {
+                font-weight: bold;
+            }
+            h2, h3, h4, p {
+                margin: 5px 0;
+                color: #000 !important;
+            }
+            hr {
+                border: none;
+                border-top: 1.5px solid #888;
+                margin: 18px 0;
+            }
+            strong {
+                color: #000 !important;
+            }
+            .grand-total-red {
+                color: #f00 !important;
+                font-weight: bold;
+                font-size: 1.2em;
+            }
+        `;
+
+        // Clone the invoice-section and append the style
+        const clone = element.cloneNode(true);
+        clone.insertBefore(style, clone.firstChild);
+
+        // Fix the Grand Total color (if present)
+        const h3s = clone.querySelectorAll('h3');
+        h3s.forEach(h3 => {
+            if (h3.style.color === 'red') {
+                h3.classList.add('grand-total-red');
+                h3.style.color = '';
+            }
+        });
+
+        // Create a temporary container for html2pdf
+        const tempDiv = document.createElement('div');
+        tempDiv.appendChild(clone);
+        document.body.appendChild(tempDiv);
+
         html2pdf()
             .set({
                 margin: 0.5,
                 filename: fileName,
-                html2canvas: { scale: 2 },
+                html2canvas: { scale: 2, backgroundColor: '#fff' },
                 jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
             })
-            .from(element)
-            .save();
+            .from(clone)
+            .save()
+            .then(() => {
+                document.body.removeChild(tempDiv);
+            });
     };
 
     return (
@@ -192,7 +268,7 @@ const Inputs = () => {
                         <label>Party Name:</label>
                         <input ref={addInputRef} onKeyDown={(e) => handleKeyDown(e, 0)} type="text" value={partyName} onChange={(e) => setPartyName(e.target.value)} />
 
-                        <label>Bill Number:</label>
+                        <label>Basic price:</label>
                         <input ref={addInputRef} onKeyDown={(e) => handleKeyDown(e, 1)} type="text" value={bill} onChange={(e) => setBill(e.target.value)} />
 
                         <label>Net Amount:</label>
@@ -304,7 +380,7 @@ const Inputs = () => {
                             <p><strong>Party Name:</strong> {partyName}</p>
                             <p><strong>Date:</strong> {date}</p>
                             <p><strong>Vehicle Number:</strong> {vehicleNumber}</p>
-                            <p><strong>Bill Number:</strong> {bill}</p>
+                            <p><strong>Basic price:</strong> {bill}</p>
                             <p><strong>Final Weight:</strong> {quanrev} - {Dust} = {totalquantity}</p>
                             <hr />
 
