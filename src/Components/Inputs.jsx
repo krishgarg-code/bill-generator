@@ -218,11 +218,17 @@ const Inputs = () => {
                 color: #000 !important;
             }
             .grand-total-red {
-                color: #f00 !important;
-                font-weight: bold;
-                font-size: 1.2em;
-            }
-        `;
+        color: red !important;
+        font-weight: bold;
+        font-size: 1.2em;
+    }
+    .grand-total-green {
+        color: green !important;
+        font-weight: bold;
+        font-size: 1.2em;
+    }
+`;
+document.head.appendChild(style);
 
         // Clone the invoice-section and append the style
         const clone = element.cloneNode(true);
